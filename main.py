@@ -10,7 +10,7 @@ import onnxruntime
 import requests
 import os
 
-MODEL_URL = "https://huggingface.co/crj/dl-ws/resolve/main/open_nsfw.onnx"
+MODEL_URL = "https://github.com/baifan1366/video-moderation-server/releases/download/model/model.onnx"
 MODEL_PATH = "model.onnx"
 
 # Download and load the ONNX model
