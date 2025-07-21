@@ -1,5 +1,7 @@
 fastapi
 uvicorn
 pillow
-torch
+tensorflow==2.15.0
+tensorflow-hub==0.14.0
 nsfw-detector
+
