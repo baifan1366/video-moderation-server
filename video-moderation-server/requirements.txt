@@ -4,4 +4,4 @@ pillow
 tensorflow==2.15.0
 tensorflow-hub==0.7.0
 nsfw-detector
-protobuf<=3.20.0
+
