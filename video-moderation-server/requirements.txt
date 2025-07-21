@@ -1,5 +1,0 @@
-fastapi
-uvicorn
-pillow==9.5.0
-opennsfw-standalone
-
