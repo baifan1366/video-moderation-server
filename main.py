@@ -10,8 +10,8 @@ import onnxruntime
 import requests
 import os
 
-MODEL_URL = "https://github.com/baifan1366/video-moderation-server/releases/download/model/model.onnx"
-MODEL_PATH = "downloaded_model.onnx"
+MODEL_URL = "https://huggingface.co/keras-io/nsfw-detection-efficientnet-b0-onnx/resolve/main/model.onnx"
+MODEL_PATH = "model.onnx"
 
 # Download and load the ONNX model
 try:
@@ -60,12 +60,18 @@ def preprocess_image(img_base64: str):
         
         # Resize and convert to RGB if needed
         img = img.convert('RGB')
-        img = img.resize((224, 224))  # Adjust size based on model requirements
+        img = img.resize((224, 224))  # EfficientNet B0 input size
         
         # Convert to numpy array and normalize
-        img_array = np.array(img).astype(np.float32) / 255.0
+        img_array = np.array(img).astype(np.float32)
         
-        # Expand dimensions for batch processing (if needed)
+        # Normalize with EfficientNet preprocessing
+        img_array = img_array / 255.0
+        
+        # Transpose from HWC to CHW format for ONNX model
+        img_array = img_array.transpose(2, 0, 1)
+        
+        # Expand dimensions for batch processing
         img_array = np.expand_dims(img_array, axis=0)
         
         return img_array
@@ -86,9 +92,10 @@ async def moderate_images(request: ModerateRequest):
         try:
             pred = session.run([output_name], {input_name: img_array})[0]
             
-            # Process prediction (adjust threshold based on model output)
-            # Assuming model output is a probability of NSFW content
-            is_nsfw = bool(pred[0][0] > 0.5)  # Adjust threshold as needed
+            # EfficientNet B0 NSFW model outputs scores for [SFW, NSFW]
+            # We want to check if NSFW probability is higher than threshold
+            nsfw_score = pred[0][1]  # Index 1 corresponds to NSFW class
+            is_nsfw = bool(nsfw_score > 0.5)  # Adjust threshold as needed
             results.append(is_nsfw)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error during inference: {str(e)}")
