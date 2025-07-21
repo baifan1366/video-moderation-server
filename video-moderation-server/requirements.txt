@@ -1,7 +1,8 @@
 fastapi
 uvicorn
+tensorflow==2.12.0
+tensorflow-hub
+protobuf==3.20.3
 pillow
-tensorflow==2.15.0
-tensorflow-hub==0.7.0
-nsfw-detector
+
 
